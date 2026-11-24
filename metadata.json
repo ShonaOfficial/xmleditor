@@ -1,0 +1,8 @@
+{
+  "name": "TemaLoka — Studio Pratinjau & Kustomisasi Template XML Blogspot",
+  "description": "Pratinjau instan template XML Blogspot tanpa login, ubah warna dan font secara real-time, uji responsivitas perangkat, ditenagai AI tanpa batas, dan ekspor tema siap pakai.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

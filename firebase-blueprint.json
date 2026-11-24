@@ -1,0 +1,536 @@
+{
+  "entities": {
+    "UserPreferences": {
+      "title": "UserPreferences",
+      "description": "Preferensi akun pengguna TemaLoka untuk pemilih mesin AI Hybrid.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID pemilik dokumen.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Nama tampilan pengguna.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "URL avatar profil pengguna.",
+          "maxLength": 500
+        },
+        "preferredMode": {
+          "type": "string",
+          "description": "Mode mesin AI aktif (local atau gemini).",
+          "enum": ["local", "gemini"],
+          "maxLength": 16
+        },
+        "preferredGeminiModel": {
+          "type": "string",
+          "description": "Model Gemini standar pilihan pengguna.",
+          "enum": ["gemini-3.1-flash-lite"],
+          "maxLength": 64
+        },
+        "preferredLocalRuntime": {
+          "type": "string",
+          "description": "Runtime AI lokal pilihan pengguna.",
+          "maxLength": 32
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembuatan dokumen."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembaruan terakhir."
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "preferredMode",
+        "preferredGeminiModel",
+        "preferredLocalRuntime",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "DailyQuota": {
+      "title": "DailyQuota",
+      "description": "Catatan pemakaian kuota harian Gemini per akun pengguna.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID pemilik kuota.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "dateKey": {
+          "type": "string",
+          "description": "Tanggal UTC/Lokal format YYYY-MM-DD.",
+          "minLength": 10,
+          "maxLength": 16,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "usedCount": {
+          "type": "integer",
+          "description": "Jumlah permintaan Gemini yang sudah dipakai pada tanggal ini."
+        },
+        "dailyLimit": {
+          "type": "integer",
+          "description": "Batas maksimal permintaan harian per akun."
+        },
+        "lastModel": {
+          "type": "string",
+          "description": "ID model Gemini terakhir yang digunakan.",
+          "maxLength": 64
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembaruan terakhir."
+        }
+      },
+      "required": [
+        "uid",
+        "dateKey",
+        "usedCount",
+        "dailyLimit",
+        "lastModel",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Pesan dalam kolom Chat AI milik pengguna yang login.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID pemilik pesan.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "role": {
+          "type": "string",
+          "description": "Peran pengirim pesan.",
+          "enum": ["user", "assistant"],
+          "maxLength": 16
+        },
+        "content": {
+          "type": "string",
+          "description": "Isi teks pesan chat.",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "engineLabel": {
+          "type": "string",
+          "description": "Label mesin AI yang menjawab pesan.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "modelId": {
+          "type": "string",
+          "description": "ID model atau runtime.",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "suggestedCss": {
+          "type": "string",
+          "description": "Opsional CSS siap terap dari asisten.",
+          "maxLength": 6000
+        },
+        "pageContext": {
+          "type": "string",
+          "description": "Tab workspace aktif saat pesan dikirim.",
+          "maxLength": 32
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pesan dibuat."
+        }
+      },
+      "required": [
+        "uid",
+        "role",
+        "content",
+        "engineLabel",
+        "modelId",
+        "pageContext",
+        "createdAt"
+      ]
+    },
+    "UserNote": {
+      "title": "UserNote",
+      "description": "Catatan Notepad pribadi milik pengguna yang disimpan ke Cloud per akun Google.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID pemilik catatan.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Judul catatan.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "content": {
+          "type": "string",
+          "description": "Isi catatan teks, kode CSS, URL, atau snippet XML.",
+          "maxLength": 50000
+        },
+        "tag": {
+          "type": "string",
+          "description": "Kategori catatan.",
+          "enum": ["umum", "xml", "css", "url", "ide"],
+          "maxLength": 16
+        },
+        "pinned": {
+          "type": "boolean",
+          "description": "Status pin catatan agar selalu muncul di atas."
+        },
+        "templateHint": {
+          "type": "string",
+          "description": "Opsional nama template XML aktif saat catatan dibuat/disimpan.",
+          "maxLength": 120
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembuatan catatan di Cloud."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu penyimpanan terakhir di Cloud."
+        }
+      },
+      "required": [
+        "uid",
+        "title",
+        "content",
+        "tag",
+        "pinned",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SiteAdsenseConfig": {
+      "title": "SiteAdsenseConfig",
+      "description": "Konfigurasi global Google AdSense, penempatan slot iklan web, dan ads.txt yang dikelola Admin Panel.",
+      "type": "object",
+      "properties": {
+        "adsenseEnabled": {
+          "type": "boolean",
+          "description": "Sakelar utama aktif/nonaktif Google AdSense pada aplikasi."
+        },
+        "publisherId": {
+          "type": "string",
+          "description": "Publisher ID Google AdSense format ca-pub-xxxxxxxxxxxxxxxx.",
+          "maxLength": 40,
+          "pattern": "^(?:ca-pub-[0-9]{10,20})?$"
+        },
+        "autoAdsEnabled": {
+          "type": "boolean",
+          "description": "Aktifkan skrip Auto Ads adsbygoogle.js di <head> aplikasi."
+        },
+        "headMetaEnabled": {
+          "type": "boolean",
+          "description": "Aktifkan meta tag verifikasi google-adsense-account di <head> aplikasi."
+        },
+        "adsTxtContent": {
+          "type": "string",
+          "description": "Isi file ads.txt resmi untuk endpoint /ads.txt dan Blogger.",
+          "maxLength": 4000
+        },
+        "hideAdsForAdmin": {
+          "type": "boolean",
+          "description": "Sembunyikan iklan live saat akun Admin masuk agar aman dari klik tidak sengaja."
+        },
+        "hideAdsInOfflineMode": {
+          "type": "boolean",
+          "description": "Jangan memuat skrip iklan eksternal saat pengguna mengaktifkan Mode Offline."
+        },
+        "testMode": {
+          "type": "boolean",
+          "description": "Aktifkan atribut data-adtest='on' untuk pengujian tata letak aman."
+        },
+        "defaultTemplatePubId": {
+          "type": "string",
+          "description": "Publisher ID default yang otomatis diisikan di alat SEO & Template XML Blogger.",
+          "maxLength": 40,
+          "pattern": "^(?:ca-pub-[0-9]{10,20})?$"
+        },
+        "topBannerEnabled": {
+          "type": "boolean",
+          "description": "Status aktif slot iklan Top Banner di workspace."
+        },
+        "topBannerSlot": {
+          "type": "string",
+          "description": "Ad Slot ID untuk Top Banner.",
+          "maxLength": 32,
+          "pattern": "^[0-9]*$"
+        },
+        "topBannerFormat": {
+          "type": "string",
+          "description": "Format iklan Top Banner.",
+          "enum": ["auto", "horizontal", "rectangle"],
+          "maxLength": 24
+        },
+        "sidebarSlotEnabled": {
+          "type": "boolean",
+          "description": "Status aktif slot iklan di Sidebar kiri."
+        },
+        "sidebarSlotId": {
+          "type": "string",
+          "description": "Ad Slot ID untuk Sidebar.",
+          "maxLength": 32,
+          "pattern": "^[0-9]*$"
+        },
+        "sidebarSlotFormat": {
+          "type": "string",
+          "description": "Format iklan Sidebar.",
+          "enum": ["auto", "vertical", "rectangle"],
+          "maxLength": 24
+        },
+        "footerSlotEnabled": {
+          "type": "boolean",
+          "description": "Status aktif slot iklan Footer / bawah tab SEO."
+        },
+        "footerSlotId": {
+          "type": "string",
+          "description": "Ad Slot ID untuk Footer.",
+          "maxLength": 32,
+          "pattern": "^[0-9]*$"
+        },
+        "footerSlotFormat": {
+          "type": "string",
+          "description": "Format iklan Footer.",
+          "enum": ["auto", "horizontal", "rectangle"],
+          "maxLength": 24
+        },
+        "modalSlotEnabled": {
+          "type": "boolean",
+          "description": "Status aktif slot iklan di modal Ekspor Tema XML."
+        },
+        "modalSlotId": {
+          "type": "string",
+          "description": "Ad Slot ID untuk modal Ekspor.",
+          "maxLength": 32,
+          "pattern": "^[0-9]*$"
+        },
+        "modalSlotFormat": {
+          "type": "string",
+          "description": "Format iklan modal Ekspor.",
+          "enum": ["auto", "rectangle"],
+          "maxLength": 24
+        },
+        "adminNote": {
+          "type": "string",
+          "description": "Catatan internal Admin mengenai perubahan konfigurasi AdSense.",
+          "maxLength": 500
+        },
+        "updatedByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID admin yang terakhir memperbarui.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "updatedByEmail": {
+          "type": "string",
+          "description": "Email admin yang terakhir memperbarui.",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembaruan konfigurasi terakhir."
+        }
+      },
+      "required": [
+        "adsenseEnabled",
+        "publisherId",
+        "autoAdsEnabled",
+        "headMetaEnabled",
+        "adsTxtContent",
+        "hideAdsForAdmin",
+        "hideAdsInOfflineMode",
+        "testMode",
+        "defaultTemplatePubId",
+        "topBannerEnabled",
+        "topBannerSlot",
+        "topBannerFormat",
+        "sidebarSlotEnabled",
+        "sidebarSlotId",
+        "sidebarSlotFormat",
+        "footerSlotEnabled",
+        "footerSlotId",
+        "footerSlotFormat",
+        "modalSlotEnabled",
+        "modalSlotId",
+        "modalSlotFormat",
+        "adminNote",
+        "updatedByUid",
+        "updatedByEmail",
+        "updatedAt"
+      ]
+    },
+    "AdsenseUnit": {
+      "title": "AdsenseUnit",
+      "description": "Pustaka unit iklan AdSense kustom untuk aplikasi maupun sisipan template XML Blogger.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Nama unit iklan.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "slotId": {
+          "type": "string",
+          "description": "ID slot iklan (data-ad-slot).",
+          "maxLength": 32,
+          "pattern": "^[0-9]*$"
+        },
+        "format": {
+          "type": "string",
+          "description": "Jenis format unit iklan AdSense.",
+          "enum": ["responsive", "leaderboard", "sidebar", "in-article", "multiplex"],
+          "maxLength": 24
+        },
+        "placement": {
+          "type": "string",
+          "description": "Target penempatan unit iklan.",
+          "enum": ["topBanner", "sidebarSlot", "footerSlot", "modalSlot", "bloggerTemplate"],
+          "maxLength": 32
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Status aktif/nonaktif unit iklan."
+        },
+        "onlyOnPosts": {
+          "type": "boolean",
+          "description": "Batasi hanya pada halaman artikel saat disisipkan ke XML Blogger."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Catatan singkat admin untuk unit iklan.",
+          "maxLength": 300
+        },
+        "createdByUid": {
+          "type": "string",
+          "description": "Firebase Auth UID pembuat unit iklan.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembuatan unit iklan."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembaruan terakhir."
+        }
+      },
+      "required": [
+        "name",
+        "slotId",
+        "format",
+        "placement",
+        "enabled",
+        "onlyOnPosts",
+        "notes",
+        "createdByUid",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Daftar pengguna tambahan yang diberi hak akses Admin Panel AdSense.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID admin.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email Google admin.",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "label": {
+          "type": "string",
+          "description": "Label/nama admin.",
+          "maxLength": 80
+        },
+        "addedByUid": {
+          "type": "string",
+          "description": "UID admin utama yang menambahkan.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu penambahan hak admin."
+        }
+      },
+      "required": ["uid", "email", "label", "addedByUid", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPreferences" },
+      "description": "Preferensi AI per akun pengguna."
+    },
+    "/users/{userId}/quotas/{dateKey}": {
+      "schema": { "$ref": "#/entities/DailyQuota" },
+      "description": "Rekam kuota harian Gemini per akun pengguna."
+    },
+    "/users/{userId}/chatMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Riwayat pesan Chat AI privat per akun pengguna."
+    },
+    "/users/{userId}/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/UserNote" },
+      "description": "Catatan Notepad privat yang disimpan ke Cloud oleh masing-masing akun pengguna."
+    },
+    "/appConfig/{configId}": {
+      "schema": { "$ref": "#/entities/SiteAdsenseConfig" },
+      "description": "Konfigurasi publik global aplikasi (dokumen 'adsense') yang hanya dapat diubah oleh Admin."
+    },
+    "/adsenseUnits/{unitId}": {
+      "schema": { "$ref": "#/entities/AdsenseUnit" },
+      "description": "Daftar unit iklan AdSense kustom yang dikelola oleh Admin."
+    },
+    "/admins/{adminUid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Daftar UID admin terotorisasi selain email admin utama."
+    }
+  }
+}
